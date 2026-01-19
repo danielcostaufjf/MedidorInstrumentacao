@@ -30,3 +30,36 @@ O firmware realiza a leitura periódica dos seguintes parâmetros elétricos:
 - **Fator de Potência** (PF)
 
 Os dados são exibidos no log do ESP32 via porta serial de debug.
+
+## Datalogger
+
+O projeto inclui um script Python (`datalogger.py`) para capturar e salvar os dados via porta serial em um arquivo CSV.
+
+### Pré-requisitos
+
+É necessário ter o Python instalado e a biblioteca `pyserial`:
+
+```bash
+pip install pyserial
+```
+
+### Uso
+
+Para iniciar o log, execute o script informando a porta COM correta do ESP32:
+
+```bash
+python datalogger.py --port COMx
+```
+
+Substitua `COMx` pela porta correspondente (ex: `COM3` no Windows ou `/dev/ttyUSB0` no Linux).
+
+**Opções adicionais:**
+
+- `--baud`: Define a taxa de transmissão (padrão: 115200).
+- `--output`: Define o nome do arquivo de saída (padrão: `datalog.csv`).
+
+Exemplo completo:
+
+```bash
+python datalogger.py --port COM3 --baud 115200 --output medicao.csv
+```
