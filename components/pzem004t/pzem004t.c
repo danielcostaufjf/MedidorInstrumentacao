@@ -29,8 +29,9 @@ static inline uint16_t pzem_get_u16(const uint8_t *resp, int offset) {
 }
 
 static inline uint32_t pzem_get_u32(const uint8_t *resp, int offset) {
-  return (resp[offset] << 24) | (resp[offset + 1] << 16) |
-         (resp[offset + 2] << 8) | resp[offset + 3];
+  uint16_t low = (resp[offset] << 8) | resp[offset + 1];
+  uint16_t high = (resp[offset + 2] << 8) | resp[offset + 3];
+  return ((uint32_t)high << 16) | low;
 }
 
 esp_err_t pzem_init(const pzem_config_t *config) {
@@ -113,19 +114,7 @@ esp_err_t pzem_read_values(const pzem_config_t *config, pzem_values_t *values) {
   values->voltage = pzem_get_u16(resp, 3) * 0.1f;
   values->current = pzem_get_u32(resp, 5) * 0.001f;
   values->power = pzem_get_u32(resp, 9) * 0.1f;
-  values->energy = pzem_get_u32(resp, 13) *
-                   0.001f; // Usually Wh, converting to kWh for consistency?
-                           // Let's check user req. Datasheet says 1Wh
-                           // resolution. Let's store as kWh if float, or just
-                           // keep Wh. Let's stick to Wh in the comment, but
-                           // float value. Code above was "energy" -> float.
-                           // usually kWh is preferred. 1 Wh = 0.001 kWh
-
-  values->energy =
-      pzem_get_u32(resp, 13) *
-      0.001f; // returning kWh directly might be better but let's stick to raw
-              // physical units if possible or standard units. Let's output kWh
-              // as it is standard. So 1Wh * 0.001 = kWh
+  values->energy = pzem_get_u32(resp, 13) * 0.001f;
 
   values->frequency = pzem_get_u16(resp, 17) * 0.1f;
   values->pf = pzem_get_u16(resp, 19) * 0.01f;

@@ -4,14 +4,13 @@
 #include "pzem004t.h"
 #include <stdio.h>
 
-
 static const char *TAG = "APP_MAIN";
 
 void pzem_task(void *pvParameters) {
   pzem_config_t pzem_config = {.uart_port = PZEM_DEFAULT_UART,
                                .tx_pin = PZEM_DEFAULT_TX_PIN,
                                .rx_pin = PZEM_DEFAULT_RX_PIN,
-                               .addr = 0x01};
+                               .addr = 0xF8};
 
   ESP_ERROR_CHECK(pzem_init(&pzem_config));
 
